@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Game</title>
+    <link rel="stylesheet" href="smart.css" />
+    <style>
+      .timer-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: lightblue;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5em;
+      }
+
+      .score-container {
+        font-size: 1.2em;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="nav-bar">
+      <div id="header">Smart Game</div>
+    </nav>
+    <div class="container">
+      <button id="start-button" onclick="startGame()">Start Game</button>
+      <div id="timer-container" class="timer-container hide">
+        <span id="timer">60</span>
+        <!-- 60 seconds -->
+      </div>
+      <h1 id="question" class="hide"></h1>
+      <div id="options-grid" class="btn-grid hide">
+        <button class="btn" onclick="checkAnswer(0)"></button>
+        <button class="btn" onclick="checkAnswer(1)"></button>
+        <button class="btn" onclick="checkAnswer(2)"></button>
+        <button class="btn" onclick="checkAnswer(3)"></button>
+      </div>
+      <div id="score-container" class="score-container hide">
+        Score: <span id="score">0</span>
+      </div>
+      <button id="restart-button" class="hide" onclick="restartGame()">
+        Restart Game
+      </button>
+    </div>
+
+    <script>
+      let questions = [
+        {
+          question: "1. Which game do you play?",
+          options: ["Khmer", "Thai", "Vietnam", "Japan"],
+          correctAnswer: "Khmer",
+        },
+        {
+          question: "2. What is the capital of France?",
+          options: ["Paris", "London", "Berlin", "Rome"],
+          correctAnswer: "Paris",
+        },
+        {
+          question: "3. Who painted the Mona Lisa?",
+          options: [
+            "Leonardo da Vinci",
+            "Pablo Picasso",
+            "Vincent van Gogh",
+            "Michelangelo",
+          ],
+          correctAnswer: "Leonardo da Vinci",
+        },
+        {
+          question: "4. What is the chemical symbol for water?",
+          options: ["H2O", "CO2", "NaCl", "O2"],
+          correctAnswer: "H2O",
+        },
+        {
+          question: "5. What is the capital of Japan?",
+          options: ["Tokyo", "Kyoto", "Osaka", "Seoul"],
+          correctAnswer: "Tokyo",
+        },
+        // Add more questions here
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayQuestion() {
+        let currentQuestion = questions[currentQuestionIndex];
+        document.getElementById("question").textContent =
+          currentQuestion.question;
+        let buttons = document.querySelectorAll(".btn");
+        for (let i = 0; i < buttons.length; i++) {
+          buttons[i].innerHTML = currentQuestion.options[i];
+        }
+      }
+
+      function checkAnswer(optionIndex) {
+        let selectedOption =
+          questions[currentQuestionIndex].options[optionIndex];
+        let currentQuestion = questions[currentQuestionIndex];
+        if (selectedOption === currentQuestion.correctAnswer) {
+          score++;
+          document.getElementById("score").textContent = score; // Update score display
+          alert("Correct! Your current score is: " + score);
+        } else {
+          alert("Incorrect! Game over. Your final score is: " + score);
+          // Reset score and currentQuestionIndex if needed
+        }
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          startTimer(); // Start the timer for the next question
+          displayQuestion();
+        } else {
+          if (score === questions.length) {
+            alert("Congratulations! You won the game!");
+          }
+          document.getElementById("restart-button").classList.remove("hide");
+        }
+      }
+
+      function startGame() {
+        startTimer();
+        displayQuestion();
+        document.getElementById("start-button").style.display = "none";
+        document.getElementById("timer-container").classList.remove("hide");
+        document.getElementById("question").classList.remove("hide");
+        document.getElementById("options-grid").classList.remove("hide");
+        document.getElementById("score-container").classList.remove("hide"); // Show score container
+      }
+
+      function restartGame() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById("score").textContent = score; // Reset score display
+        displayQuestion();
+        startTimer();
+        document.getElementById("restart-button").classList.add("hide");
+      }
+
+      function startTimer() {
+        let timeLeft = 60; // 60 seconds
+        let timerDisplay = document.getElementById("timer");
+        let timerInterval = setInterval(() => {
+          timeLeft--; // Decrease time by 1 second
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "0";
+            alert("Time's up! Game over.");
+            document.getElementById("restart-button").classList.remove("hide");
+          }
+        }, 1000); // Run the interval every 1 second (1000 milliseconds)
+      }
+    </script>
+  </body>
+</html>
